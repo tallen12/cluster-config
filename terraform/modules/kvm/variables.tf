@@ -16,6 +16,16 @@ variable "ansible_user" {
   sensitive = false
 }
 
+variable "snapshot_volume_path" {
+  description = "The path to the snapshot volume."
+  type = string
+}
+variable "agent_channel_path_postfix" {
+  description = "The path to the agent."
+  type = string
+  default = 0
+}
+
 
 variable "vm_public_key" {
   description = "SSH public key for user."

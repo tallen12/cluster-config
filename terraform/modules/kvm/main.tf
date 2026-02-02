@@ -12,39 +12,10 @@ provider "libvirt" {
   uri = "qemu+sshcmd://${var.ssh_user_for_host}@${var.ssh_host_for_host}/system?no_verify=1"
 }
 
-resource "libvirt_volume" "alpine" {
-  name = "alpine-3.22.2-base.qcow2"
-  pool = "default"
-
-  target = {
-    format = {
-      type = "qcow2"
-    }
-    permissions = {
-      owner = "64055"
-      group = "108"
-      mode  = "0775"
-    }
-  }
-
-
-  create = {
-    content = {
-      url = "https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/cloud/generic_alpine-3.22.2-x86_64-bios-cloudinit-r0.qcow2"
-    }
-    format = {
-      type = "qcow2"
-    }
-    permissions = {
-      permissions = {
-        owner = "64055"
-        group = "108"
-        mode  = "0775"
-      }
-    }
-  }
-
+locals {
+  hostname = "k3s-node-${var.node-id}"
 }
+
 
 resource "libvirt_volume" "alpine_disk" {
   name     = "k3s-node-${var.node-id}-volume.qcow2"
@@ -61,16 +32,11 @@ resource "libvirt_volume" "alpine_disk" {
       mode  = "0775"
     }
   }
-
+  
   backing_store = {
-    path = libvirt_volume.alpine.path
+    path = var.snapshot_volume_path
     format = {
       type = "qcow2"
-    }
-    permissions = {
-      owner = "64055"
-      group = "108"
-      mode  = "0775"
     }
   }
 }
@@ -80,11 +46,11 @@ resource "libvirt_cloudinit_disk" "cloudinit" {
 
   user_data = templatefile("${path.module}/templates/cloudinit-user-data.yaml.tpl", {
     ssh_key = var.vm_public_key
-    node_id    = var.node-id
+    hostname    = local.hostname
     ansible_user = var.ansible_user
   })
   meta_data = templatefile("${path.module}/templates/cloudinit-metadata.yaml.tpl", {
-    node_id    = var.node-id
+    hostname    = local.hostname
   })
 }
 
@@ -96,11 +62,6 @@ resource "libvirt_volume" "cloudinit_volume" {
   target = {
     format = {
       type = "iso"
-    }
-    permissions = {
-      owner = "64055"
-      group = "108"
-      mode  = "0775"
     }
   }
 
@@ -128,10 +89,7 @@ resource "libvirt_domain" "vm" {
   devices = {
     channels = [{
       source = {
-          unix = {
-            mode = "bind"
-            path = "org.qemu.guest_agent.0"
-        } 
+          unix = {} 
       }
       target = {
         virt_io = {

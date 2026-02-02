@@ -1,0 +1,6 @@
+---
+- name: Setup Ansible users
+  hosts: vm_hosts
+  become: true
+  roles:
+    - setup_ansible_user

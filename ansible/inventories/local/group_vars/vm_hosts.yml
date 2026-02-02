@@ -1,0 +1,2 @@
+ansible_ssh_public_key: "{{ lookup('community.general.onepassword', 'Ansible User SSH', field='public key', vault='Development') }}"
+ansible_linux_user: "{{ lookup('community.general.onepassword', 'Ansible User', field='username', vault='Development') }}"

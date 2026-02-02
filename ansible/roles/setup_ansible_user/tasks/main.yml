@@ -1,0 +1,23 @@
+- name: Setup ansible user with locked password
+  ansible.builtin.user:
+    name: '{{ ansible_linux_user }}'
+    state: present
+    shell: /bin/bash
+    comment: "Ansible user to run playbooks on host"
+    create_home: true
+    password_lock: true
+    groups:
+      - libvirt
+      - sudo
+- name: Add ansible user to sudoers
+  community.general.sudoers:
+    name: '{{ ansible_linux_user }}'
+    user: '{{ ansible_linux_user }}'
+    commands: ALL
+    nopassword: true
+    validation: required
+- name: Add ssh key to authorized user
+  ansible.posix.authorized_key:
+    user: '{{ ansible_linux_user }}'
+    state: present
+    key: '{{ ansible_ssh_public_key }}'
