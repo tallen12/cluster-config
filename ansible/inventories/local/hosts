@@ -1,4 +1,19 @@
 vm_hosts:
   hosts:
     home-nas:
+    sakiko-server:
 
+
+k3s_cluster:
+  children:
+    server:
+      hosts:
+        k3s-node-tomori:
+    agent:
+      hosts:
+        k3s-node-sakiko:
+        k3s-node-anon:
+  vars:
+    ansible_user: ansible
+    k3s_version: v1.35.0+k3s3
+    api_endpoint: "{{ hostvars[groups['server'][0]]['ansible_host'] | default(groups['server'][0]) }}"

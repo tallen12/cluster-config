@@ -1,0 +1,20 @@
+- name: Check if br0 is configured
+  ansible.builtin.set_fact:
+    setup_bridge_ubuntu_br0_configured: "{{ ansible_facts['br0'].ipv4.address | default(none) }}"
+- name: Is br0 configured
+  ansible.builtin.debug:
+    msg: "br0 is configured with IP address {{ setup_bridge_ubuntu_br0_configured }}"
+- name: Set up br0 if not configured
+  when: setup_bridge_ubuntu_br0_configured is none
+  block:
+    - name: Get main interface
+      ansible.builtin.set_fact:
+        setup_bridge_ubuntu_target_interface_name: "{{ ansible_facts['interfaces'] | select('match', '^enp.*') | list | first }}"
+    - name: Deploy Netplan Yaml
+      ansible.builtin.template:
+        src: netplan-template.yml
+        dest: /etc/netplan/99-vm-bridge.yaml
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Apply netplan config

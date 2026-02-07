@@ -1,0 +1,8 @@
+---
+- name: Apply netplan configuration
+  listen: "Apply netplan config"
+  ansible.builtin.command: netplan apply
+  async: 1
+  poll: 0
+  become: true
+  changed_when: true

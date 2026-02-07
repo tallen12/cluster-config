@@ -2,5 +2,13 @@
 - name: Setup Ansible users
   hosts: vm_hosts
   become: true
+  remote_user: "{{ lookup('env', 'USER') }}"
   roles:
     - setup_ansible_user
+
+- name: Prepare Host
+  hosts: vm_hosts
+  become: true
+  roles:
+    - setup_libvirt
+    - setup_bridge_ubuntu

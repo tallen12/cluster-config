@@ -1,0 +1,20 @@
+- name: Install KVM/Libvirt packages and required Python packages (e.g., for Ubuntu)
+  ansible.builtin.package:
+    name:
+      - qemu-kvm
+      - libvirt-daemon-system
+      - libvirt-clients
+    state: present
+    update_cache: true
+
+- name: Ensure the libvirtd service is running and enabled at boot
+  ansible.builtin.service:
+    name: libvirtd
+    state: started
+    enabled: true
+
+- name: Ensure ansible user is in libvirt group
+  ansible.builtin.user:
+    name: ansible
+    groups: libvirt
+    append: true

@@ -1,0 +1,14 @@
+network:
+  version: 2
+  ethernets:
+    {{ setup_bridge_ubuntu_target_interface_name }}:
+      dhcp4: false
+      dhcp6: false
+  bridges:
+    br0:
+      dhcp4: yes
+      macaddress: {{ ansible_facts[setup_bridge_ubuntu_target_interface_name].macaddress }}
+      addresses:
+        - {{ ansible_facts[setup_bridge_ubuntu_target_interface_name].ipv4.address }}/24
+      interfaces:
+        - {{ setup_bridge_ubuntu_target_interface_name }}

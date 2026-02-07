@@ -7,7 +7,6 @@
     create_home: true
     password_lock: true
     groups:
-      - libvirt
       - sudo
 - name: Add ansible user to sudoers
   community.general.sudoers:
