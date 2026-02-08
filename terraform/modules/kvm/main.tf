@@ -78,7 +78,9 @@ resource "libvirt_domain" "vm" {
   memory_unit = "MiB"
   vcpu        = var.vm_vcpu
   type        = "kvm"
-
+  cpu = {
+    mode = "host-passthrough"
+  }
   os = {
     type         = "hvm"
     type_arch    = "x86_64"

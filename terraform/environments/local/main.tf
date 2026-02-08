@@ -30,7 +30,6 @@ module "alpine_snapshot_home_nas" {
   ssh_host_for_host    = "home-nas"
   snapshot_name = "ubuntu"
   snapshot_url = "https://cloud-images.ubuntu.com/resolute/current/resolute-server-cloudimg-amd64.img"
-
 }
 
 module "alpine_snapshot_sakiko" {

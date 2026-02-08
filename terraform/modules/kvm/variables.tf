@@ -42,7 +42,7 @@ variable "node-id" {
 variable "vm_memory" {
   description = "Memory for VM in MB."
   type        = number  
-  default = 2048
+  default = 16384
 }
 
 variable "vm_disk_size" {

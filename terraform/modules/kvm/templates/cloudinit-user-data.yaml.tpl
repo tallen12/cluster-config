@@ -2,8 +2,6 @@
 users:
   - default
   - name: ${ansible_user}
-    # doas:
-    #   - permit nopass ${ansible_user} as root
     passwd: "*"
     sudo: ALL=(ALL) NOPASSWD:ALL
     lock_passwd: true
