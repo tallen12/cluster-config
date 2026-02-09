@@ -25,7 +25,7 @@ data "onepassword_item" "ansible_user_ssh" {
 
 
 module "alpine_snapshot_home_nas" {
-  source      = "../../modules/vm_snapshot"
+  source      = "../../../modules/vm_snapshot"
   ssh_user_for_host = data.onepassword_item.ansible_user.username
   ssh_host_for_host    = "home-nas"
   snapshot_name = "ubuntu"
@@ -33,7 +33,7 @@ module "alpine_snapshot_home_nas" {
 }
 
 module "alpine_snapshot_sakiko" {
-  source      = "../../modules/vm_snapshot"
+  source      = "../../../modules/vm_snapshot"
   ssh_user_for_host = data.onepassword_item.ansible_user.username
   ssh_host_for_host    = "sakiko-server"
   snapshot_name = "ubuntu"
@@ -43,7 +43,7 @@ module "alpine_snapshot_sakiko" {
 
 # Should run the ansible playbook to setup the ansible ssh user on the VM hosts 
 module "k3s-node-1" {
-  source      = "../../modules/kvm"
+  source      = "../../../modules/kvm"
   ssh_user_for_host = data.onepassword_item.ansible_user.username
   ssh_host_for_host    = "home-nas"
   vm_public_key   = data.onepassword_item.ansible_user_ssh.public_key
@@ -53,7 +53,7 @@ module "k3s-node-1" {
 }
 
 module "k3s-node-2" {
-  source      = "../../modules/kvm"
+  source      = "../../../modules/kvm"
   ssh_user_for_host = data.onepassword_item.ansible_user.username
   ssh_host_for_host    = "sakiko-server"
   vm_public_key   = data.onepassword_item.ansible_user_ssh.public_key
@@ -63,7 +63,7 @@ module "k3s-node-2" {
 }
 
 module "k3s-node-3" {
-  source      = "../../modules/kvm"
+  source      = "../../../modules/kvm"
   ssh_user_for_host = data.onepassword_item.ansible_user.username
   ssh_host_for_host    = "home-nas"
   vm_public_key   = data.onepassword_item.ansible_user_ssh.public_key
@@ -80,3 +80,5 @@ output "test_output" {
     module.k3s-node-3.hostname
   ]
 }
+
+
