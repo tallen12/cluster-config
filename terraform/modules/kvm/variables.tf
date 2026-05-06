@@ -26,7 +26,6 @@ variable "agent_channel_path_postfix" {
   default = 0
 }
 
-
 variable "vm_public_key" {
   description = "SSH public key for user."
   type        = string

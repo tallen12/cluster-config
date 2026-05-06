@@ -26,18 +26,19 @@ resource "libvirt_volume" "alpine_disk" {
     format = {
       type = "qcow2"
     }
-    permissions = {
-      owner = "64055"
-      group = "108"
-      mode  = "0775"
-    }
   }
-  
+
   backing_store = {
     path = var.snapshot_volume_path
     format = {
       type = "qcow2"
     }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      target.permissions
+    ]
   }
 }
 
@@ -45,12 +46,12 @@ resource "libvirt_cloudinit_disk" "cloudinit" {
   name = "vm-init"
 
   user_data = templatefile("${path.module}/templates/cloudinit-user-data.yaml.tpl", {
-    ssh_key = var.vm_public_key
-    hostname    = local.hostname
+    ssh_key      = var.vm_public_key
+    hostname     = local.hostname
     ansible_user = var.ansible_user
   })
   meta_data = templatefile("${path.module}/templates/cloudinit-metadata.yaml.tpl", {
-    hostname    = local.hostname
+    hostname = local.hostname
   })
 }
 
@@ -91,7 +92,7 @@ resource "libvirt_domain" "vm" {
   devices = {
     channels = [{
       source = {
-          unix = {} 
+        unix = {}
       }
       target = {
         virt_io = {
