@@ -1,6 +1,35 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+
 resources:
-- argocd
-- infrastructure
+- git@github.com:tallen12/gitops_k3s_infra.git/infrastructure/argocd/base
+- git@github.com:tallen12/gitops_k3s_infra.git/infrastructure/external-secrets/base
+- git@github.com:tallen12/gitops_k3s_infra.git/infrastructure/1password/base
+- git@github.com:tallen12/gitops_k3s_infra.git/infrastructure/argocd-secrets/base
+- https://github.com/tallen12/gitops_k3s_infra.git/apps/appset
+
+
+
+secretGenerator:
+  - name: onepassword-connect-token
+    namespace: external-secrets
+    envs: 
+      - .secrets/secrets.env
+    options:
+      disableNameSuffixHash: true
+  - name: op-credentials
+    namespace: external-secrets
+    files:
+      - .secrets/1password-credentials.json
+    options:
+      disableNameSuffixHash: true 
+  - name: bootstrap-github-creds
+    namespace: argocd
+    envs:
+     - .secrets/github_ssh.env
+    files:
+      - .secrets/sshPrivateKey
+    options: 
+      labels:
+        argocd.argoproj.io/secret-type: repo-creds
