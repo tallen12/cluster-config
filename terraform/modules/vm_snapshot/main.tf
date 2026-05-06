@@ -11,13 +11,13 @@ terraform {
 variable "ssh_user_for_host" {
   description = "The ssh user on the remote."
   type        = string
-  sensitive = false
+  sensitive   = false
 }
 
 variable "ssh_host_for_host" {
   description = "The ssh host."
   type        = string
-  sensitive = false
+  sensitive   = false
 }
 
 variable "snapshot_name" {
@@ -57,5 +57,5 @@ resource "libvirt_volume" "snapshot" {
 }
 
 output "snapshot_volume" {
-    value = libvirt_volume.snapshot
+  value = libvirt_volume.snapshot
 }
