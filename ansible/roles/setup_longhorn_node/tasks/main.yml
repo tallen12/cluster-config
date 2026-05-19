@@ -1,0 +1,32 @@
+- name: Check kernel config for CONFIG_NFS_V4_2
+  ansible.builtin.shell: |
+    set -o pipefail
+    cat /boot/config-$(uname -r) | grep CONFIG_NFS_V4_2
+  args:
+    executable: /bin/bash
+  register: setup_longhorn_node_nfs_v4_2_check
+  changed_when: false
+  failed_when: false
+
+- name: Fail if CONFIG_NFS_V4_2 is not built-in or module
+  ansible.builtin.fail:
+    msg: "CONFIG_NFS_V4_2 is not enabled (expected =y or =m)"
+  when: >
+    'CONFIG_NFS_V4_2=y' not in setup_longhorn_node_nfs_v4_2_check.stdout and
+    'CONFIG_NFS_V4_2=m' not in setup_longhorn_node_nfs_v4_2_check.stdout
+
+- name: Install longhorn required packages (https://longhorn.io/docs/1.11.2/deploy/install/)
+  ansible.builtin.package:
+    name:
+      - open-iscsi
+      - nfs-common
+      - cryptsetup
+      - dmsetup
+    state: present
+    update_cache: true
+
+- name: Ensure iscsid is enabled and started
+  systemd:
+    name: iscsid
+    enabled: true
+    state: started

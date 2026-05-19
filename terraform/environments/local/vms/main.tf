@@ -73,11 +73,40 @@ module "k3s-node-3" {
   agent_channel_path_postfix = 1
 }
 
+
+module "k3s-node-4" {
+  source                     = "../../../modules/kvm"
+  ssh_user_for_host          = data.onepassword_item.ansible_user.username
+  ssh_host_for_host          = "home-nas"
+  vm_public_key              = data.onepassword_item.ansible_user_ssh.public_key
+  node-id                    = "taki"
+  ansible_user               = data.onepassword_item.ansible_user.username
+  snapshot_volume_path       = module.alpine_snapshot_home_nas.snapshot_volume.path
+  agent_channel_path_postfix = 2
+  vm_disk_size = 107374182400
+}
+
+
+module "k3s-node-5" {
+  source                     = "../../../modules/kvm"
+  ssh_user_for_host          = data.onepassword_item.ansible_user.username
+  ssh_host_for_host          = "sakiko-server"
+  vm_public_key              = data.onepassword_item.ansible_user_ssh.public_key
+  node-id                    = "umiri"
+  ansible_user               = data.onepassword_item.ansible_user.username
+  snapshot_volume_path       = module.alpine_snapshot_sakiko.snapshot_volume.path
+  agent_channel_path_postfix = 2
+  vm_disk_size = 107374182400
+}
+
+
 output "test_output" {
   value = [
     module.k3s-node-1.hostname,
     module.k3s-node-2.hostname,
-    module.k3s-node-3.hostname
+    module.k3s-node-3.hostname,
+    module.k3s-node-4.hostname,
+    module.k3s-node-5.hostname
   ]
 }
 
